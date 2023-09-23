@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_DB=timeseries_db
+      - POSTGRES_USER=mmostafa
+      - POSTGRES_PASSWORD=mypassword
+
+  web:
+    build: . # The Dockerfile is in the same directory as the docker-compose.yml
+    # update any changes to the models and run the surver
+    command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8001"
+    volumes:
+      - simulation_output:/timeseries_project/simulation_output
+      - migrations:/timeseries_project/migrations
+    ports:
+      - 8001:8001
+    depends_on:
+      - db
+
+volumes:
+  simulation_output:
+  migrations:
